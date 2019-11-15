@@ -54,6 +54,7 @@ function draw() {
 				score++
         dragonFace = 50
 			}
-
-			text('你jb已经吃了'+ this.score + '个香蕉', 10, 30);
+      fill(255);
+      textSize(50);
+			text('你jb已经吃了'+ this.score + '个香蕉', 10, 80);
     }
