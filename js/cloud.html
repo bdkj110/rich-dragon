@@ -1,0 +1,91 @@
+<head>
+  <meta charset="UTF-8">
+  <title>天气图谱</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+</head>
+
+<body>
+  <script type="text/javascript">
+    let clouds = [];
+    let snowflakes = [];
+let weather;
+    function setup() {
+      createCanvas(400, 400);
+
+      loadJSON('http://api.openweathermap.org/data/2.5/weather?q=beijing&appid=c3622d8d9a82d286f07c38566bd6ecab', gotData);
+
+    }
+
+    //////////////////////////////////获取json数据
+    function gotData(data) {
+      weather = data;
+    }
+
+    //////////////////////////////////主画板
+    function draw() {
+      translate(width / 2, height / 2);
+      fill(125,205,124);
+      noStroke();
+      ellipse(0, 0, 350, 350);
+      if(weather){
+        let d = weather.wind.deg;
+          cloud1(d);
+      }
+
+    }
+    ////////////////////云粒子
+    function cloud1(direction) {
+      let t = frameCount / 80; // update time
+      angleMode(DEGREES);
+       rotate(direction);
+
+        clouds.push(new cloudflake());
+
+      // loop through snowflakes with a for..of loop
+      for (let flake of clouds) {
+        flake.update(t); // update snowflake position
+        flake.display(); // draw snowflake
+      }
+
+    }
+    ////////////////////单个云
+    function cloudflake() {
+
+      angleMode(RADIANS);
+      this.posX = 100;
+      this.posY = -240;
+      this.initialangle = random(0, 2 * PI);
+      this.size = random(3, 18); //雪花大小
+
+      // radius of snowflake spiral
+      // chosen so the snowflakes are uniformly spread out in area
+      this.radius = sqrt(random(pow(width / 2, 2))); //左右偏移度
+
+      this.update = function(time) {
+        // x position follows a circle
+        let w = 0.3; // 角速度
+        let angle = w * time + this.initialangle;
+        this.posX = this.radius * sin(angle);
+
+        // different size snowflakes fall at slightly different y speeds
+        this.posY += this.size / 7;
+
+        // delete snowflake if past end of screen
+        if (this.posY > height) {
+          let index = clouds.indexOf(this);
+          clouds.splice(index, 1);
+        }
+      };
+
+      this.display = function() {
+        fill(255);
+        ellipse(this.posX, this.posY, this.size);
+      };
+    }
+    //////
+  </script>
+
+</body>
